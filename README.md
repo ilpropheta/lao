@@ -1,5 +1,7 @@
 # lao
 
+<img src="img/logo.png" alt="Lao's logo" width="200"/>
+
 A simple static site for managing (long) URL redirects. It's a manual way to create shortened URLs, like `lao.bz/alias`. I don't rely on existing services such as TinyURL because I have specific needs:
 
 - A free, centralized place to keep track of all my redirects
