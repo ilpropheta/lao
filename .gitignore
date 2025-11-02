@@ -1,0 +1,33 @@
+# Jekyll build output
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Bundler / Ruby gems
+/vendor/bundle
+Gemfile.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Docker-specific
+*.env
+docker-compose.override.yml
+
+# Python HTTP server / virtual environments
+__pycache__/
+*.pyc
+venv/
+.env
+
+# IDE/editor files
+.idea/
+.vscode/
+*.iml

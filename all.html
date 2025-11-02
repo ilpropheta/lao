@@ -1,0 +1,146 @@
+---
+layout: none
+title: All redirects
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>All redirects</title>
+
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --fg: #c9d1d9;
+    --accent: #58a6ff;
+  }
+
+  body {
+    font-family: system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 14px;
+    width: fit-content;
+    max-width: 95vw;
+    min-width: 420px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  }
+
+  h2 {
+    margin-top: 0;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 18px;
+    font-size: 15px;
+    background: #21262d;
+    color: var(--fg);
+  }
+
+  ul { list-style: none; padding: 0; margin: 0; }
+
+  li {
+    display: grid;
+    grid-template-columns: minmax(50px, max-content) minmax(300px, max-content) minmax(100px, max-content); 
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 6px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  a:hover { text-decoration: underline; }
+
+  .description {
+    font-size: 14px;
+    color: var(--fg);
+    opacity: 0.8;
+    overflow-wrap: anywhere;
+	text-align: left;
+  }
+
+  .url {
+    opacity: .7;
+    font-size: 14px;
+    max-width: 50ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: text;
+    user-select: all;
+    text-align: left;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="card">
+  <h2>All redirects</h2>
+
+  <input placeholder="Search..." oninput="filterLinks(this.value)" />
+
+  <ul id="links">
+  {% assign redirects = site.pages | where_exp: "p", "p.url_target" %}
+  {% assign sorted = redirects | sort: 'name' %}
+  {% for p in sorted %}
+    <li>
+      <a href="{{ p.url | replace: '/index.html', '' }}">{{ p.name | replace: '.md', '' }}</a>
+
+      {% if p.description %}
+        <span class="description">{{ p.description }}</span>
+      {% else %}
+        <span class="description"></span>
+      {% endif %}
+
+      <span class="url" data-full="{{ p.url_target }}" title="{{ p.url_target }}">{{ p.url_target }}</span>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+
+<script>
+function filterLinks(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll("#links li").forEach(li => {
+    li.style.display = li.innerText.toLowerCase().includes(q) ? "" : "none";
+  });
+}
+
+document.querySelectorAll('.url').forEach(el => {
+  el.addEventListener('click', () => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  });
+});
+</script>
+
+</body>
+</html>
