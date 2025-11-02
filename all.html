@@ -7,129 +7,201 @@ title: All redirects
 <html>
 <head>
 <meta charset="utf-8" />
-
 <title>All redirects</title>
-
+{% include head.html %}
 <style>
-  :root {
-    --bg: #0d1117;
-    --card: #161b22;
-    --fg: #c9d1d9;
-    --accent: #58a6ff;
-  }
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --fg: #c9d1d9;
+  --accent: #58a6ff;
+}
 
-  body {
-    font-family: system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--fg);
-    margin: 0;
-    padding: 40px;
-    display: flex;
-    justify-content: center;
-  }
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
 
-  .card {
-    background: var(--card);
-    padding: 30px;
-    border-radius: 14px;
-    width: fit-content;
-    max-width: 95vw;
-    min-width: 420px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.3);
-  }
+.card {
+  background: var(--card);
+  padding: 30px;
+  border-radius: 14px;
+  width: 800px;      
+  max-width: 95vw;   
+  min-width: 420px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
 
-  h2 {
-    margin-top: 0;
-    font-weight: 500;
-  }
+h2 { margin-top: 0; font-weight: 500; }
 
-  input {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: none;
-    margin-bottom: 18px;
-    font-size: 15px;
-    background: #21262d;
-    color: var(--fg);
-  }
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 12px;
+  font-size: 15px;
+  background: #21262d;
+  color: var(--fg);
+}
 
-  ul { list-style: none; padding: 0; margin: 0; }
+#clearFilter {
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #30363d;
+  color: var(--fg);
+  cursor: pointer;
+  display: none;
+}
 
-  li {
-    display: grid;
-    grid-template-columns: minmax(50px, max-content) minmax(300px, max-content) minmax(100px, max-content); 
-    align-items: center;
-    gap: 10px;
-    margin: 8px 0;
-    border-bottom: 1px solid #30363d;
-    padding-bottom: 6px;
-  }
+ul { list-style: none; padding: 0; margin: 0; }
 
-  a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    overflow-wrap: anywhere;
-  }
+li {
+  display: grid;
+  grid-template-columns: 200px 1fr 250px; 
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 6px;
+  overflow: hidden;
+}
 
-  a:hover { text-decoration: underline; }
+a { color: var(--accent); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
+a:hover { text-decoration: underline; }
 
-  .description {
-    font-size: 14px;
-    color: var(--fg);
-    opacity: 0.8;
-    overflow-wrap: anywhere;
-	text-align: left;
-  }
+.description {
+  font-size: 14px;
+  color: var(--fg);
+  opacity: 0.8;
+  overflow-wrap: break-word;
+  white-space: normal; 
+}
 
-  .url {
-    opacity: .7;
-    font-size: 14px;
-    max-width: 50ch;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: text;
-    user-select: all;
-    text-align: left;
-  }
+.url {
+  opacity: 0.7;
+  font-size: 14px;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  cursor: text;
+  user-select: all;
+  text-align: left;
+}
+
+.tags { margin-top: 4px; grid-column: 2 / 3; } 
+
+.tag {
+  display: inline-block;
+  background: #30363d;
+  color: var(--accent);
+  padding: 2px 8px;
+  margin-right: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#tagList {
+  margin-bottom: 20px;
+}
+
+.tag:hover { background: #1f6feb; color: white; }
+.tag.active { background: var(--accent); color: var(--card); } 
 </style>
-
 </head>
 <body>
 
 <div class="card">
   <h2>All redirects</h2>
 
-  <input placeholder="Search..." oninput="filterLinks(this.value)" />
+  <input id="searchBox" placeholder="Search..." oninput="filterLinks(this.value)" />
+  <button id="clearFilter">Clear</button>
+
+  <ul id="tagList">
+  {% assign all_redirects = site.redirects %}
+  {% assign tag_set = "" | split: "," %}
+  {% for p in all_redirects %}
+    {% if p.tags %}
+      {% for t in p.tags %}
+        {% assign tag_set = tag_set | push: t %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+  {% assign tag_set = tag_set | uniq | sort %}
+  {% for t in tag_set %}
+    <span class="tag" onclick="filterByTag('{{ t }}')">{{ t }}</span>
+  {% endfor %}
+  </ul>
 
   <ul id="links">
-  {% assign redirects = site.pages | where_exp: "p", "p.url_target" %}
-  {% assign sorted = redirects | sort: 'name' %}
-  {% for p in sorted %}
-    <li>
-      <a href="{{ p.url | replace: '/index.html', '' }}">{{ p.name | replace: '.md', '' }}</a>
-
+  {% assign sorted_redirects = site.redirects | sort: 'name' %}
+  {% for p in sorted_redirects %}
+    {% assign filename = p.path | split:'/' | last | split:'.' | first %}
+    <li data-tags="{% if p.tags %}{{ p.tags | join: ',' }}{% endif %}" data-name="{{ filename }}">
+      <a href="{{ p.url | replace: '/index.html', '' }}">{{ filename }}</a>
       {% if p.description %}
         <span class="description">{{ p.description }}</span>
       {% else %}
         <span class="description"></span>
       {% endif %}
-
       <span class="url" data-full="{{ p.url_target }}" title="{{ p.url_target }}">{{ p.url_target }}</span>
+      {% if p.tags %}
+      <div class="tags">
+        {% for tag in p.tags %}
+          <span class="tag" onclick="filterByTag('{{ tag }}')">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
     </li>
   {% endfor %}
   </ul>
 </div>
 
 <script>
-function filterLinks(q) {
+let activeTag = null;
+
+function filterLinks(q = "") {
   q = q.toLowerCase();
   document.querySelectorAll("#links li").forEach(li => {
-    li.style.display = li.innerText.toLowerCase().includes(q) ? "" : "none";
+    const tags = li.dataset.tags || "";
+    const matchesTag = !activeTag || tags.includes(activeTag);
+    const matchesText = li.innerText.toLowerCase().includes(q);
+    li.style.display = (matchesTag && matchesText) ? "" : "none";
   });
+
+  document.getElementById('clearFilter').style.display =
+    activeTag || q ? "inline-block" : "none";
 }
+
+function filterByTag(tag) {
+  activeTag = tag;
+  document.getElementById("searchBox").value = "";
+  filterLinks();
+
+  document.querySelectorAll('.tag').forEach(el => {
+    if (el.textContent === tag) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+
+  history.replaceState(null, "", "?tag=" + encodeURIComponent(tag));
+}
+
+document.getElementById("clearFilter").onclick = () => {
+  activeTag = null;
+  document.getElementById("searchBox").value = "";
+  filterLinks();
+  document.querySelectorAll('.tag').forEach(el => el.classList.remove('active'));
+  history.replaceState(null, "", "/all");
+};
 
 document.querySelectorAll('.url').forEach(el => {
   el.addEventListener('click', () => {
@@ -140,6 +212,12 @@ document.querySelectorAll('.url').forEach(el => {
     sel.addRange(range);
   });
 });
+
+window.onload = () => {
+  const params = new URLSearchParams(window.location.search);
+  const tag = params.get("tag");
+  if (tag) filterByTag(tag);
+};
 </script>
 
 </body>

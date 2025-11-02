@@ -1,2 +1,7 @@
 title: lao
 permalink: pretty
+
+collections:
+  redirects:
+    output: true
+    permalink: /:name/

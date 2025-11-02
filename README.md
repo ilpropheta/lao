@@ -7,7 +7,7 @@ A simple static site for managing (long) URL redirects. It's a manual way to cre
 - The ability to delete my redirects whenever I want
 - Optional descriptions associated with each redirect
 - A single page displaying all redirects
-- Possibly in the future: support for tags or categories to group redirects
+- Tags
 
 **Note:** These are HTML-based redirects, not real HTTP redirects. This is sufficient for my purposes.
 
@@ -17,13 +17,14 @@ A simple static site for managing (long) URL redirects. It's a manual way to cre
 
 This project was primarily created for personal use, but feel free to fork and adapt it to your own needs.
 
-All redirects are stored as `.md` files with `layout: redirect`. A redirect file looks like this:
+All redirects are stored in `_redirects` as `.md` files with `layout: redirect`. A redirect file looks like this:
 
 ```yaml
 ---
 layout: redirect
 url_target: <url/to/redirect/to>
 description: <optional description>
+tags: <optional list of tags>
 ---
 ```
 
@@ -37,11 +38,11 @@ Since I serve this website from `lao.bz`, the URL becomes `lao.bz/filename`, whi
 
 ### Show all redirects
 
-This website also renders a page listing all available redirects at `/all`.
+This website also renders a page listing all available redirects at [`/all`](https://lao.bz/all).
 
 **Important**: Do not create a file named `all.md`, or the build will trigger a warning and this feature will not work.
 
-In the future, I may add support for categories or tags to group related redirects, possibly allowing URLs like `/all/tag`. This is not supported yet.
+The `all` page supports a query string parameter `?tag=<tag-name>` to filter on that tag.
 
 ### Build and run locally
 
