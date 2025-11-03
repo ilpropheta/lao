@@ -128,7 +128,7 @@ p.description {
 	if (existingRedirect) {
 	  title = `${existingRedirect.name}`;
 	  description = existingRedirect.description || "";
-	  url = `${existingRedirect.url}` || "";
+	  url = `${existingRedirect.url}` || `/${existingRedirect.name}`;
 	} else {
 	  // the link starts with "/" AND is an existing redirect:
 	  // - the title is the redirect's name
