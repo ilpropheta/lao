@@ -1,13 +1,13 @@
 ---
 layout: none
-title: redirect list
+title: link list
 ---
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
-<title>lao | redirect list</title>
+<title>lao | link list</title>
 {% include head.html %}
 <style>
 :root {
@@ -30,9 +30,8 @@ body {
 .card {
   background: var(--card);
   padding: 20px;
-  border-radius: 14px;
-  width: 800px;
-  max-width: 95vw;
+  border-radius: 14px;  
+  max-width: 80vw;
   min-width: 280px;
   box-shadow: 0 0 30px rgba(0,0,0,0.3);
   overflow: hidden;
@@ -44,7 +43,7 @@ ul { list-style: none; padding: 0; margin: 0; }
 
 li {
   display: grid;
-  grid-template-columns: 150px 1fr 250px;
+  grid-template-columns: 200px 1fr;
   align-items: center;
   gap: 10px;
   margin: 12px 0;
@@ -62,38 +61,17 @@ a {
 a:hover { text-decoration: underline; }
 
 .description {
-  font-size: 14px;
+  font-size: 16px;
   opacity: 0.85;
   overflow-wrap: break-word;
 }
 
-.url {
-  opacity: 0.7;
-  font-size: 14px;
-  overflow-wrap: break-word;
-  white-space: normal;
-  cursor: text;
-  user-select: all;
-  text-align: left;
+p.description {
+	font-size: 20px;
+	margin-bottom: 30px;
 }
 
-.tags { margin-top: 4px; grid-column: 2 / 3; }
-
-.tag {
-  display: inline-block;
-  background: #30363d;
-  color: var(--accent);
-  padding: 2px 8px;
-  margin-right: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.tag:hover { background: #1f6feb; color: white; }
-.tag.active { background: var(--accent); color: var(--card); }
-
-@media (max-width: 600px) {
+@media (max-width: 400px) {
   body { padding: 10px; }
 
   .card { padding: 16px; }
@@ -104,11 +82,6 @@ a:hover { text-decoration: underline; }
     border-bottom: 1px solid #24292f;
   }
 
-  .url {
-    margin-top: 6px;
-    opacity: 0.9;
-  }
-
   .description { margin-top: 4px; }
 }
 </style>
@@ -117,7 +90,7 @@ a:hover { text-decoration: underline; }
 <body>
 
 <div class="card">
-  <h2>redirect list</h2>
+  <h2>link list</h2>
   <ul id="links"></ul>
 </div>
 
@@ -127,12 +100,10 @@ a:hover { text-decoration: underline; }
     {% for redirect in site.redirects %}
   	{% assign filename = redirect.path | split:'/' | last | split:'.' | first %}  	
   	{
-	  name: "{{ filename }}",
-  	  layout: "{{ redirect.layout }}",
-  	  description: {{ redirect.description | markdownify | strip_newlines | jsonify }},
-  	  url_target: "{{ redirect.url_target }}",
-  	  redirects: {{ redirect.redirects | jsonify }},
-  	  tags: {{ redirect.tags | jsonify }}  
+	  name: "{{ filename }}",  	  
+  	  description: {{ redirect.description | markdownify | strip_newlines | jsonify }},  	  
+  	  links: {{ redirect.links | jsonify }},
+	  url: "{{ redirect.url_target }}",
   	},  	
     {% endfor %}
   ];
@@ -142,33 +113,55 @@ a:hover { text-decoration: underline; }
   
   const container = document.getElementById("links");
   const desc = document.createElement('p');
+  desc.className = "description";
   desc.innerHTML = listObj.description;
   container.appendChild(desc);
   
-  listObj.redirects.forEach(rname => {
-    const r = findRedirect(rname);
-	if (r) {
-	  const li = document.createElement('li');
-	  
-	  const link = document.createElement('a');
-	  link.href = `/${r.name}`;
-	  link.innerHTML = r.name;
-	  li.appendChild(link);
-	  
-	  const descSpan = document.createElement('span');
-	  descSpan.className = "description";
-	  descSpan.innerHTML = r.description || "";
-	  li.appendChild(descSpan);
-	  
-	  const urlSpan = document.createElement('span');
-	  urlSpan.className = "url";
-	  urlSpan.dataset.full = r.url_target || "";
-	  urlSpan.title = r.url_target || "";
-	  urlSpan.textContent = r.url_target || "";
-	  li.appendChild(urlSpan);
-	  
-	  container.appendChild(li);
-	}  	
+  listObj.links.forEach(rname => {
+    let existingRedirect = findRedirect(rname);
+	let title = "";
+	let description = "";
+	let url = "";
+	// the link is an existing redirect:
+	// - the title is the redirect's name
+	// - the link points to the mapped url_target
+	if (existingRedirect) {
+	  title = `${existingRedirect.name}`;
+	  description = existingRedirect.description || "";
+	  url = `${existingRedirect.url}` || "";
+	} else {
+	  // the link starts with "/" AND is an existing redirect:
+	  // - the title is the redirect's name
+	  // - the link points to the redirect itself
+	  if ((typeof rname === 'string' || rname instanceof String) && rname.startsWith('/') && rname.length > 1) {
+		existingRedirect = findRedirect(rname.substr(1));
+		if (existingRedirect) {
+			title = rname.substr(1);
+			description = existingRedirect.description || "";
+			url = `/${existingRedirect.name}` || "";
+		}
+	  }
+	  // the link is just a custom link	  
+	  else {
+		title = rname.title || rname;
+		description = rname.description || "";
+		url = rname.url_target || rname;
+	  }  	  
+	}
+	
+	const li = document.createElement('li');
+
+	const link = document.createElement('a');
+	link.href = url;
+	link.innerHTML = title;
+	li.appendChild(link);
+	
+	const descSpan = document.createElement('span');
+	descSpan.className = "description";
+	descSpan.innerHTML = description;
+	li.appendChild(descSpan);
+	
+	container.appendChild(li);
   });
 </script>
 
