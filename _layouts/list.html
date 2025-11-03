@@ -1,0 +1,154 @@
+---
+layout: none
+title: redirect list
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>lao | redirect list</title>
+{% include head.html %}
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --fg: #c9d1d9;
+  --accent: #58a6ff;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  background: var(--card);
+  padding: 30px;
+  border-radius: 14px;
+  width: 800px;
+  max-width: 95vw;
+  min-width: 420px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+h2 { margin-top: 0; font-weight: 500; }
+
+ul { list-style: none; padding: 0; margin: 0; }
+
+li {
+  display: grid;
+  grid-template-columns: 200px 1fr 250px;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 6px;
+  overflow: hidden;
+}
+
+a { color: var(--accent); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
+a:hover { text-decoration: underline; }
+
+.description {
+  font-size: 14px;
+  color: var(--fg);
+  opacity: 0.8;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.url {
+  opacity: 0.7;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: text;
+  user-select: all;
+  text-align: left;
+}
+
+.tags { margin-top: 4px; grid-column: 2 / 3; }
+
+.tag {
+  display: inline-block;
+  background: #30363d;
+  color: var(--accent);
+  padding: 2px 8px;
+  margin-right: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.tag:hover { background: #1f6feb; color: white; }
+.tag.active { background: var(--accent); color: var(--card); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>redirect list</h2>
+  <ul id="links"></ul>
+</div>
+
+<script>
+  const listName = "{{ page.name | default: page.slug }}"  
+  const redirectsData = [
+    {% for redirect in site.redirects %}
+  	{% assign filename = redirect.path | split:'/' | last | split:'.' | first %}  	
+  	{
+	  name: "{{ filename }}",
+  	  layout: "{{ redirect.layout }}",
+  	  description: {{ redirect.description | markdownify | strip_newlines | jsonify }},
+  	  url_target: "{{ redirect.url_target }}",
+  	  redirects: {{ redirect.redirects | jsonify }},
+  	  tags: {{ redirect.tags | jsonify }}  
+  	},  	
+    {% endfor %}
+  ];
+  
+  const findRedirect = (name) => redirectsData.find(r => r.name === name);
+  const listObj = findRedirect(listName);
+  
+  const container = document.getElementById("links");
+  const desc = document.createElement('p');
+  desc.innerHTML = listObj.description;
+  container.appendChild(desc);
+  
+  listObj.redirects.forEach(rname => {
+    const r = findRedirect(rname);
+	if (r) {
+	  const li = document.createElement('li');
+	  
+	  const link = document.createElement('a');
+	  link.href = `/${r.name}`;
+	  link.innerHTML = r.name;
+	  li.appendChild(link);
+	  
+	  const descSpan = document.createElement('span');
+	  descSpan.className = "description";
+	  descSpan.innerHTML = r.description || "";
+	  li.appendChild(descSpan);
+	  
+	  const urlSpan = document.createElement('span');
+	  urlSpan.className = "url";
+	  urlSpan.dataset.full = r.url_target || "";
+	  urlSpan.title = r.url_target || "";
+	  urlSpan.textContent = r.url_target || "";
+	  li.appendChild(urlSpan);
+	  
+	  container.appendChild(li);
+	}  	
+  });
+</script>
+
+</body>
+</html>

@@ -1,13 +1,13 @@
 ---
 layout: none
-title: All redirects
+title: all redirects
 ---
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
-<title>All redirects</title>
+<title>lao | all redirects</title>
 {% include head.html %}
 <style>
 :root {
@@ -84,6 +84,37 @@ a:hover { text-decoration: underline; }
   opacity: 0.8;
   overflow-wrap: break-word;
   white-space: normal; 
+  margin: 0;
+  padding: 0;
+}
+
+.description p {
+  margin: 0;
+}
+
+.list-tag {
+  display: inline-block;     
+  background: #ff6a3d;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;       
+  text-align: left;
+}
+
+.list-tag:hover {
+  background: #ff844f;
+}
+
+li > .list-tag {
+  display: inline-block;    /* shrink to content */
+  width: auto;              /* prevent stretching */
+  justify-self: start;      /* align left in the grid cell */
+  text-align: left;
+  margin: 0;
 }
 
 .url {
@@ -121,7 +152,7 @@ a:hover { text-decoration: underline; }
 <body>
 
 <div class="card">
-  <h2>All redirects</h2>
+  <h2>all redirects</h2>
 
   <input id="searchBox" placeholder="Search..." oninput="filterLinks(this.value)" />
   <button id="clearFilter">Clear</button>
@@ -142,18 +173,22 @@ a:hover { text-decoration: underline; }
   {% endfor %}
   </ul>
 
-  <ul id="links">
-  {% assign sorted_redirects = site.redirects | sort: 'name' %}
-  {% for p in sorted_redirects %}
+  <ul id="links">  
+  {% for p in site.redirects %}
     {% assign filename = p.path | split:'/' | last | split:'.' | first %}
+    {% assign description = p.description | markdownify | strip_newlines %}  
     <li data-tags="{% if p.tags %}{{ p.tags | join: ',' }}{% endif %}" data-name="{{ filename }}">
       <a href="{{ p.url | replace: '/index.html', '' }}">{{ filename }}</a>
-      {% if p.description %}
-        <span class="description">{{ p.description }}</span>
+      {% if description %}
+        <span class="description">{{ description }}</span>
       {% else %}
         <span class="description"></span>
       {% endif %}
-      <span class="url" data-full="{{ p.url_target }}" title="{{ p.url_target }}">{{ p.url_target }}</span>
+      {% if p.layout == "redirect" %}
+        <span class="url" data-full="{{ p.url_target }}" title="{{ p.url_target }}">{{ p.url_target }}</span>
+      {% else %}
+        <span class="list-tag" onclick="filterByList()">list</span>
+      {% endif %}      
       {% if p.tags %}
       <div class="tags">
         {% for tag in p.tags %}
@@ -195,8 +230,21 @@ function filterByTag(tag) {
   history.replaceState(null, "", "?tag=" + encodeURIComponent(tag));
 }
 
-document.getElementById("clearFilter").onclick = () => {
+function filterByList() {
   activeTag = null;
+  document.getElementById("searchBox").value = "";
+  
+  document.querySelectorAll("#links li").forEach(li => {
+    const isList = li.querySelector(".list-tag");
+    li.style.display = isList ? "" : "none";
+  });
+
+  document.getElementById('clearFilter').style.display = "inline-block";
+  document.querySelectorAll('.tag').forEach(el => el.classList.remove('active'));
+}
+
+document.getElementById("clearFilter").onclick = () => {
+  activeTag = null;  
   document.getElementById("searchBox").value = "";
   filterLinks();
   document.querySelectorAll('.tag').forEach(el => el.classList.remove('active'));

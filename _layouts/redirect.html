@@ -1,18 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>{{ page.title }}</title>
-{% include head.html %}
-<script>
-window.onload = function() {
-  {% if page.url_target %}
-    window.location.href = "{{ page.url_target }}";
-  {% elsif page.links %}
-    window.location.href = "/list?name={{ page.name }}";
-  {% endif %}
-};
-</script>
+  <meta charset="utf-8" />
+  <meta http-equiv="refresh" content="0; url={{ page.url_target }}">
+  <script>window.location.replace("{{ page.url_target }}");</script>
+  <title>Redirecting...</title>
 </head>
 <body>
 <p>Redirecting to<a href="{{ page.url_target }}">another url</a></p>
