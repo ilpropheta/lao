@@ -13,7 +13,7 @@ links:
     description: Talk to SObjectizer repo!
   - title: Issues
     description: Ask questions here
-	url_target: https://github.com/Stiffstream/sobjectizer/issues
+    url_target: https://github.com/Stiffstream/sobjectizer/issues
   - title: Active discussions
     description: Ideas, polls and Q&A
     url_target: https://github.com/Stiffstream/sobjectizer/discussions
