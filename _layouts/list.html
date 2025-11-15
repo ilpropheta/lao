@@ -7,6 +7,7 @@ title: link list
 <html>
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lao | link list</title>
 {% include head.html %}
 <style>
@@ -57,11 +58,12 @@ a {
   text-decoration: none;
   font-weight: 600;
   overflow-wrap: anywhere;
+  font-size: 20px;
 }
 a:hover { text-decoration: underline; }
 
 .description {
-  font-size: 16px;
+  font-size: 20px;
   opacity: 0.85;
   overflow-wrap: break-word;
 }
@@ -71,7 +73,7 @@ p.description {
 	margin-bottom: 30px;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   body { padding: 10px; }
 
   .card { padding: 16px; }
@@ -81,8 +83,20 @@ p.description {
     padding-bottom: 14px;
     border-bottom: 1px solid #24292f;
   }
+  
+  a {
+    font-size: 30px;
+  }
+  
+  p.description {
+    font-size: 25px;
+	margin-bottom: 30px;
+  }
 
-  .description { margin-top: 4px; }
+  .description { 
+	margin-top: 4px; 
+	font-size: 25px;
+   }
 }
 </style>
 
