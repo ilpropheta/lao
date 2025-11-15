@@ -8,8 +8,5 @@ links:
   - title: Demo
     url_target: https://github.com/ilpropheta/multiparadigm-concurrency
     description: GitHub repository with the code  
-  - title: SObjectizer on DeepWiki
-    url_target: https://deepwiki.com/Stiffstream/sobjectizer
-    description: Talk to SObjectizer repo!
   - sobjectizer
 ---
