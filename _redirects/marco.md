@@ -4,8 +4,8 @@ description: Marco's quick links
 tags: [personal]
 links:   
   - linkedin
-  - title: marco@italiancpp.org
-    description: My email address
+  - title: Email address
+    description: marco@italiancpp.org
     url_target: mailto:marco@italiancpp.org
   - title: Portfolio
     url_target: https://ilpropheta.github.io/
