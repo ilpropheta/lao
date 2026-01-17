@@ -6,7 +6,7 @@ links:
   - linkedin
   - title: marco@italiancpp.org
     description: My email address
-    url_target: mailto://marco@italiancpp.org
+    url_target: mailto:marco@italiancpp.org
   - title: Portfolio
     url_target: https://ilpropheta.github.io/
     description: Community, blogging and speaking activities
