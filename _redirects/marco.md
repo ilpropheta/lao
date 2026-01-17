@@ -4,7 +4,7 @@ description: Marco's quick links
 tags: [personal]
 links:   
   - linkedin
-  - title: Email address
+  - title: Email
     description: marco@italiancpp.org
     url_target: mailto:marco@italiancpp.org
   - title: Portfolio
